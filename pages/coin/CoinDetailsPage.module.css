@@ -1,0 +1,67 @@
+/* CoinDetailsPage.module.css */
+.coinDetailsCard {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    width: 75%;
+  }
+  
+  .coinDetailsTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .coinDetailsData {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+  
+  .coinDetailsSymbol {
+    font-weight: bold;
+    color: #007bff;
+  }
+  
+  .coinDetailsRank {
+    font-weight: bold;
+  }
+  /* CoinDetailsPage.module.css */
+
+.coinDetailsCard {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.coinDetailsTitle {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.coinLogo img {
+  max-width: 100px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+.coinDetails {
+  margin-top: 20px;
+}
+
+.coinDetailsData {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.coinDetailsValue {
+  font-weight: bold;
+}
+
+/* Add more styles as needed for your specific design. */
