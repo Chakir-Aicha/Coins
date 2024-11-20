@@ -8,9 +8,192 @@
   font-size: 0.95rem;
 }
 
+/* globals.css */
 body {
-  background-color: #f3f3f3;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f7fb;
 }
+
+.dashboard {
+  padding: 20px;
+  max-width: 1800px;
+  margin: 0 auto;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  color: #333;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Market Data Table */
+.data-table {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.data-table h2 {
+  background-color: #007bff;
+  color: white;
+  padding: 15px;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.data-table th {
+  background-color: #f2f2f2;
+}
+
+.data-table td img {
+  border-radius: 50%;
+}
+
+.data-table td {
+  vertical-align: middle;
+}
+
+.data-table td, .data-table th {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Indicators Section */
+.indicators {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.indicators h2 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.25rem;
+}
+
+.indicators p {
+  font-size: 1rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+.indicators p span {
+  font-weight: bold;
+}
+
+/* Graph Section */
+.chart-section {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.chart-section h2 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.25rem;
+}
+
+canvas {
+  width: 100% !important;
+  height: auto !important; /* Adjusting the size of the graph */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 15px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-content {
+    gap: 20px;
+  }
+
+  .chart-section canvas {
+    height: 250px !important;
+  }
+}
+/* Indicators Section with Table */
+.indicators {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.indicators h2 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.25rem;
+}
+
+.indicators table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.indicators th, .indicators td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.indicators th {
+  background-color: #f2f2f2;
+  font-size: 1rem;
+  color: #555;
+}
+
+.indicators td {
+  font-size: 1rem;
+  color: #555;
+}
+
+.indicators td {
+  vertical-align: middle;
+}
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+  .indicators table {
+    font-size: 0.9rem;
+  }
+}
+
 
 #starred {
   box-shadow: 3px 3px 10px #b5b5b5;
