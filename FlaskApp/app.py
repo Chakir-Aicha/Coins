@@ -1,36 +1,24 @@
 from flask import Flask, request, jsonify
-from apscheduler.schedulers.background import BackgroundScheduler
-from model import predict, train_model
-import joblib
+from flask_cors import CORS
 import os
 import signal
-import sys
-from flask_cors import CORS  # Import CORS
+from model import predict as model_predict, train_model  # Renaming the import
+
 
 
 app = Flask(__name__)
-
-# Enable CORS for all routes
-CORS(app)
-
-# Initialize scheduler
-scheduler = BackgroundScheduler()
-
-# Function to retrain the model
-def scheduled_train():
-    print("Training model...")
-    train_model()
-    print("Model retrained.")
+CORS(app)  
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
         input_data = request.get_json()
-        print(f"Received data: {input_data}")  # Log received data
+        print(f"Received data: {input_data}")
 
         if input_data is None:
             return jsonify({'error': 'No input data provided'}), 400
 
+        # Extract required fields
         moving_average_7 = input_data.get('movingAverage7')
         moving_average_30 = input_data.get('movingAverage30')
         rsi = input_data.get('rsi')
@@ -38,39 +26,41 @@ def predict():
         if not all([moving_average_7, moving_average_30, rsi]):
             return jsonify({'error': 'Missing required fields'}), 400
 
-        prediction = some_prediction_function(moving_average_7, moving_average_30, rsi)
+        # Predict the next price using the model
+        input_features = [moving_average_7, moving_average_30, rsi]  # The last two are placeholders
 
-        print(prediction)
-        return jsonify({'prediction': prediction})
+        # Predict the next price using the model
+        prediction = model_predict(input_features)        
+        print(f"Prediction: {prediction}")
+        return jsonify({'prediction': prediction}), 200
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        print(f"Error during prediction: {e}")
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/train', methods=['POST'])
 def retrain_model():
-    train_model()
-    return jsonify({'message': 'Model retrained successfully'}), 200
+    try:
+        print("Retraining model...")
+        train_model()  
+        print("Model retrained successfully.")
+        return jsonify({'message': 'Model retrained successfully'}), 200
+    except Exception as e:
+        print(f"Error during retraining: {e}")
+        return jsonify({'error': str(e)}), 500
 
-# Graceful shutdown handler
-def shutdown_scheduler():
-    print("Shutting down scheduler...")
-    scheduler.shutdown()
 
-# Register shutdown handler to stop scheduler on app exit
-signal.signal(signal.SIGINT, lambda signum, frame: shutdown_scheduler())
+
+
+def graceful_shutdown(sig, frame):
+    print("Shutting down gracefully...")
+    sys.exit(0)
 
 if __name__ == '__main__':
-    # Ensure the model is available
     if not os.path.exists('bitcoin_model.pkl'):
-        train_model()  # Train model if not already trained
+        train_model()  # Train model if it doesn't exist
 
-    # Set up the scheduler to run the retraining every hour
-    scheduler.add_job(scheduled_train, 'interval', hours=1)
-    scheduler.start()
+    signal.signal(signal.SIGINT, graceful_shutdown)  # Handle graceful shutdown on Ctrl+C
+    app.run(debug=True)
 
-    # Run the Flask app
-    try:
-        app.run(debug=True)
-    except KeyboardInterrupt:
-        shutdown_scheduler()

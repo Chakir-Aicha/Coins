@@ -1,6 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
 import '../styles/globals.css';
 import Chart from 'chart.js/auto';
+import { ChartDataset,ChartOptions } from 'chart.js';
+import 'chartjs-adapter-date-fns';
+
+
+
 
 interface Coin {
   id: string;
@@ -8,9 +13,6 @@ interface Coin {
   name: string;
   image: string;
   current_price: number;
-  price_change_percentage_1h_in_currency: number;
-  price_change_percentage_24h: number;
-  price_change_percentage_7d: number;
   total_volume: number;
   market_cap: number;
 }
@@ -27,8 +29,9 @@ export default function Home() {
   const [rsi, setRsi] = useState<number[]>([]);
   const [historicalPrices, setHistoricalPrices] = useState<HistoricalDataPoint[]>([]);
   const chartRef = useRef<Chart | null>(null);
-  const [prediction, setPrediction] = useState<number | null>(null); 
-  const predictionChartRef = useRef<Chart | null>(null); 
+  const [csvData, setCsvData] = useState<HistoricalDataPoint[]>([]);
+  const timePriceChartRef = useRef<Chart | null>(null);
+
   const coinId = 'bitcoin';
 
   useEffect(() => {
@@ -49,32 +52,16 @@ export default function Home() {
     }
 
     fetchCoin();
-    intervalId = setInterval(fetchCoin, 60000); 
+    intervalId = setInterval(fetchCoin, 60000);
 
-    return () => clearInterval(intervalId); 
+    return () => clearInterval(intervalId);
   }, [coinId]);
 
-  // useEffect(() => {
-  //   if (coin && movingAverage7.length && movingAverage30.length && rsi.length) {
-  //     initializeChart(coin.id);
-  //     logPriceToServer(coin.current_price, coin.id, movingAverage7, movingAverage30, rsi);
-      
-  //     fetchPrediction(movingAverage7.slice(-1)[0], movingAverage30.slice(-1)[0], rsi.slice(-1)[0]);
-  //   }
-  // }, [coin, movingAverage7, movingAverage30, rsi]); 
   useEffect(() => {
     if (coin) {
       initializeChart(coin.id);
       if (movingAverage7.length && movingAverage30.length && rsi.length) {
-        logPriceToServer(
-          coin.current_price,
-          coin.id,
-          movingAverage7,
-          movingAverage30,
-          rsi
-        ); 
-        fetchPrediction(movingAverage7.slice(-1)[0], movingAverage30.slice(-1)[0], rsi.slice(-1)[0]);
-
+        logPriceToServer(coin.current_price, movingAverage7, movingAverage30, rsi);
       }
     }
   }, [coin]);
@@ -118,6 +105,7 @@ export default function Home() {
     }
     return rsi;
   }
+
   async function fetchPrediction(ma7: number, ma30: number, rsiValue: number) {
     try {
       const response = await fetch('http://127.0.0.1:5000/predict', {
@@ -125,43 +113,28 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ movingAverage7: ma7, movingAverage30: ma30, rsi: rsiValue })
       });
+
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
-        setPrediction(data.prediction);
-        updatePredictionChart(data.prediction); // Update prediction chart
+
+        // Log the prediction data to your server
+        const logResponse = await fetch('/api/logPredection', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prediction: data.prediction }),
+        });
+
+        if (logResponse.ok) {
+          updateChartFromCSV();
+        } else {
+          console.error('Error logging prediction:', logResponse.statusText);
+        }
       } else {
         console.error('Error fetching prediction:', response.statusText);
       }
     } catch (error) {
       console.error('Error in prediction API call:', error);
     }
-  }
-  function updatePredictionChart(prediction: number) {
-    if (predictionChartRef.current) predictionChartRef.current.destroy();
-    
-    const ctx = document.getElementById(`prediction-chart`) as HTMLCanvasElement;
-    predictionChartRef.current = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Prediction'],
-        datasets: [
-          {
-            label: 'Predicted Price',
-            data: [prediction],
-            borderColor: 'purple',
-            borderDash: [5, 5],
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: { display: true },
-          y: { beginAtZero: false },
-        },
-      },
-    });
   }
 
   async function initializeChart(coinId: string) {
@@ -176,7 +149,7 @@ export default function Home() {
     setMovingAverage7(ma7);
     setMovingAverage30(ma30);
     setRsi(rsiData);
-    setHistoricalPrices(historicalData); 
+    setHistoricalPrices(historicalData);
 
     if (chartRef.current) chartRef.current.destroy();
     const ctx = document.getElementById(`chart-${coinId}`) as HTMLCanvasElement;
@@ -202,24 +175,47 @@ export default function Home() {
     });
   }
 
-  function logPriceToServer(price: number, coinId: string, ma7: number[], ma30: number[], rsi: number[]) {
-    fetch('/api/logPrice', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        coinId,
-        price,
-        timestamp: Date.now(),
-        movingAverage7: ma7.slice(-1)[0], 
-        movingAverage30: ma30.slice(-1)[0], 
-        rsi: rsi.slice(-1)[0], 
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log('Price and indicators logged:', data))
-      .catch((error) => console.error('Error logging price and indicators:', error));
+  async function logPriceToServer(price: number, ma7: number[], ma30: number[], rsi: number[]) {
+    try {
+      const response = await fetch('/api/logPrice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          price,
+          timestamp: Date.now(),
+          movingAverage7: ma7.slice(-1)[0],
+          movingAverage30: ma30.slice(-1)[0],
+          rsi: rsi.slice(-1)[0],
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Price and indicators logged:', await response.json());
+        await retrainModel();
+        fetchPrediction(ma7.slice(-1)[0], ma30.slice(-1)[0], rsi.slice(-1)[0]);
+      } else {
+        console.error('Error logging price and indicators:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error logging price and indicators:', error);
+    }
+  }
+
+  async function retrainModel() {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/train', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        console.log('Model retraining initiated successfully.');
+      } else {
+        console.error('Error retraining the model:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error in retrain API call:', error);
+    }
   }
 
   function exportToCSV(data: HistoricalDataPoint[]) {
@@ -243,6 +239,101 @@ export default function Home() {
     link.download = `${coinId}prices.csv`;
     link.click();
   }
+
+
+const updateChartFromCSV = async () => {
+  try {
+    const response1 = await fetch('/data/predictions.csv'); 
+    const csvText1 = await response1.text();
+    const rows1 = csvText1.split('\n'); 
+    const parsedData1 = rows1.map((row) => {
+      const columns = row.split(',');
+      return {
+        timestamp: new Date(columns[0]).getTime(), 
+        price: parseFloat(columns[1]), 
+      };
+    }).slice(-50); 
+
+    const response2 = await fetch('/data/bitcoin_prices.csv'); 
+    const csvText2 = await response2.text();
+    const rows2 = csvText2.split('\n').slice(1); 
+    const parsedData2 = rows2.map((row) => {
+      const columns = row.split(',');
+      return {
+        timestamp: new Date(columns[0]).getTime(),
+        price: parseFloat(columns[1]), 
+      };
+    }).slice(-50); 
+
+    const datasets: ChartDataset<'line'>[] = [
+      {
+        label: 'Predictions',
+        data: parsedData1.map(({ timestamp, price }) => ({ x: timestamp, y: price })),
+        borderColor: 'blue',
+        fill: false,
+      },
+      {
+        label: 'Valeurs reelles',
+        data: parsedData2.map(({ timestamp, price }) => ({ x: timestamp, y: price })),
+        borderColor: 'red',
+        fill: false,
+      },
+    ];
+
+    if (timePriceChartRef.current) {
+      timePriceChartRef.current.destroy();
+      timePriceChartRef.current = null; 
+    }
+
+    createChartFromCSV(datasets);
+  } catch (error) {
+    console.error('Error reading CSV file:', error);
+  }
+};
+
+
+const createChartFromCSV = (datasets: ChartDataset<'line'>[]) => {
+  const ctx = document.getElementById('timePriceChart') as HTMLCanvasElement;
+  
+  // Ensure the canvas context is valid
+  if (!ctx) {
+    console.error('Canvas element not found');
+    return;
+  }
+
+  timePriceChartRef.current = new Chart(ctx, {
+    type: 'line',
+    data: {
+      datasets: datasets,
+    },
+    options: {
+      scales: {
+        x: {
+          type: 'time',
+          time: {
+            unit: 'minute',
+          },
+          title: {
+            display: true,
+            text: 'Time',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Price',
+          },
+        },
+      },
+    } as ChartOptions, // Cast options to ChartOptions type
+  });
+};
+
+
+useEffect(() => {
+  updateChartFromCSV();
+}, []);
+
 
   return (
     <div className="dashboard">
@@ -310,10 +401,14 @@ export default function Home() {
         <div>
         <canvas id={`chart-${coinId}`}></canvas>        
         </div>
+      
+       
+        <div>
+        <canvas id="timePriceChart" ></canvas>
+      </div>
 
-        {/* Download CSV */}
-        <button onClick={() => exportToCSV(historicalPrices)}>Download CSV</button>
       </section>
+     
     </div>
   );
 }

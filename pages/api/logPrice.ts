@@ -11,7 +11,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Invalid data: Price, moving averages, and RSI must be provided as numbers' });
     }
 
-    const csvFilePath = path.join(process.cwd(), 'data', 'bitcoin_prices.csv');
+    const csvFilePath = path.join(process.cwd(),'public','data', 'bitcoin_prices.csv');
     
     const formattedTimestamp = new Date(timestamp).toISOString().replace('T', ' ').slice(0, 19);
 
