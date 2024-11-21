@@ -295,7 +295,6 @@ const updateChartFromCSV = async () => {
 const createChartFromCSV = (datasets: ChartDataset<'line'>[]) => {
   const ctx = document.getElementById('timePriceChart') as HTMLCanvasElement;
   
-  // Ensure the canvas context is valid
   if (!ctx) {
     console.error('Canvas element not found');
     return;
@@ -325,7 +324,7 @@ const createChartFromCSV = (datasets: ChartDataset<'line'>[]) => {
           },
         },
       },
-    } as ChartOptions, // Cast options to ChartOptions type
+    } as ChartOptions, 
   });
 };
 
