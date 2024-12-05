@@ -1,0 +1,172 @@
+.dashboard-container {
+  display: flex;
+  height: 150vh;
+  background-color: #f4f6f9;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.dashboard-sidebar {
+  width: 250px;
+  background-color: #343a40;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dashboard-sidebar h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.dashboard-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dashboard-sidebar li {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dashboard-sidebar li:hover,
+.dashboard-sidebar .active {
+  background-color: #495057;
+}
+
+.dashboard-main {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.dashboard-header {
+  background-color: #007bff;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.dashboard-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.coin-details {
+  text-align: center;
+}
+
+.coin-logo {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 10px;
+}
+/* Market Data Table */
+.data-table {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.data-table h2 {
+  background-color: #007bff;
+  color: white;
+  padding: 15px;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.data-table th {
+  background-color: #f2f2f2;
+}
+
+.data-table td img {
+  border-radius: 50%;
+}
+
+.data-table td {
+  vertical-align: middle;
+}
+
+.data-table td, .data-table th {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Indicators Section */
+.indicators {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.indicators h2 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.25rem;
+}
+
+.indicators table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.indicators th, .indicators td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.indicators th {
+  background-color: #f2f2f2;
+  font-size: 1rem;
+  color: #555;
+}
+
+.indicators td {
+  font-size: 1rem;
+  color: #555;
+}
+
+.indicators td {
+  vertical-align: middle;
+}
+.chat-icon-container {
+  position: relative;
+}
+
+.chat-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  border: 2px solid white;
+}

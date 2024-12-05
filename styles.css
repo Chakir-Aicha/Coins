@@ -1,0 +1,77 @@
+/* Add your custom styles here */
+.crypto-list {
+  list-style: none;
+  padding: 0;
+}
+
+.crypto-item {
+  display: flex;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px; /* Add rounded corners for a card-like appearance */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
+  background-color: #fff; /* Set a background color for the card */
+}
+/* In your imported CSS file */
+.pagination {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.pagination button {
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.pagination button:hover {
+  background-color: #0056b3;
+}
+
+
+.crypto-image {
+  max-width: 100px;
+  margin-right: 20px;
+}
+
+.crypto-details {
+  flex: 1;
+}
+
+/* Styling for Coin Details Page */
+.coin-details-card {
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  margin: 20px;
+}
+
+.coin-details-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.coin-details-data {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.coin-details-data strong {
+  color: #333;
+}
+
+.coin-details-symbol {
+  color: #777;
+}
+
+.coin-details-rank {
+  color: #777;
+}
